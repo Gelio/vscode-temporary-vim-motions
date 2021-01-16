@@ -1,11 +1,13 @@
-import { TextEditor, TextEditorLineNumbersStyle } from "vscode";
+import { Disposable, TextEditor, TextEditorLineNumbersStyle } from "vscode";
 
-export const enableRelativeLines = (editor: TextEditor) => {
+export const enableRelativeLines = (editor: TextEditor): Disposable => {
   const initialValue = editor.options.lineNumbers;
 
   editor.options.lineNumbers = TextEditorLineNumbersStyle.Relative;
 
-  return function restore() {
-    editor.options.lineNumbers = initialValue;
+  return {
+    dispose() {
+      editor.options.lineNumbers = initialValue;
+    },
   };
 };
