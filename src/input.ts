@@ -1,5 +1,5 @@
 import { isLeft } from "fp-ts/lib/Either";
-import { none, some } from "fp-ts/lib/Option";
+import { isSome, none, some } from "fp-ts/lib/Option";
 import {
   commands,
   Disposable,
@@ -13,7 +13,7 @@ import {
   withChildDisposer,
 } from "./hierarchical-disposer";
 import { Highlighter } from "./highlight";
-import { parseVimMotions } from "./vim-motion";
+import { parseVimMotions } from "./motions";
 
 export async function processVimMotionInput({
   disposer: parentDisposer,
@@ -103,17 +103,20 @@ class VimMotionInput implements Disposable {
 
   private parseAndExecuteMotions = async (input: string) => {
     const result = parseVimMotions(input);
+    this.inputBox.validationMessage = undefined;
 
     if (isLeft(result)) {
-      this.inputBox.validationMessage = result.left.message;
+      if (isSome(result.left)) {
+        this.inputBox.validationMessage = result.left.value.message;
+      }
+
       return;
     }
 
     this.restoreSelection();
-    this.inputBox.validationMessage = undefined;
     let lastCommand: Thenable<unknown> = Promise.resolve();
 
-    for (const motion of result.right) {
+    for (const motion of result.right.motion) {
       lastCommand = commands.executeCommand("cursorMove", {
         to: motion.direction,
         value: motion.lines,
