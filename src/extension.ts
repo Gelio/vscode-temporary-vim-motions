@@ -1,18 +1,42 @@
+import { getOrElse, isLeft, map } from "fp-ts/lib/Either";
+import { constNull, pipe } from "fp-ts/lib/function";
 import * as vscode from "vscode";
+import { parseVimMotion } from "./vim-motion";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("vim-motions extension is now active");
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
   const disposable = vscode.commands.registerCommand(
-    "vim-motions.helloWorld",
-    () => {
-      // The code you place here will be executed every time your command is executed
+    "vim-motions.execute",
+    async () => {
+      const result = await vscode.window.showInputBox({
+        prompt: "Enter a vim motion",
+        placeHolder: "For example: 10j",
+        validateInput: (s) =>
+          pipe(
+            s,
+            parseVimMotion,
+            map(constNull),
+            getOrElse<Error, string | null>((e) => e.message),
+          ),
+      });
 
-      // Display a message box to the user
-      vscode.window.showInformationMessage("Hello World from vim-motions!");
+      if (!result) {
+        return;
+      }
+
+      const vimMotion = parseVimMotion(result);
+      if (isLeft(vimMotion)) {
+        throw new Error(
+          `Internal error, input validation is not working properly: ${vimMotion.left}`,
+        );
+      }
+
+      console.log("Moving", vimMotion.right);
+      vscode.commands.executeCommand("cursorMove", {
+        to: vimMotion.right.direction,
+        value: vimMotion.right.lines,
+      });
     },
   );
 
