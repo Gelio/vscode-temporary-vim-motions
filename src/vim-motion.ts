@@ -1,21 +1,48 @@
-import { Either, left, right } from "fp-ts/lib/Either";
+import { Either, isLeft, left, right } from "fp-ts/lib/Either";
 
 export interface VimMotion {
   direction: "up" | "down";
   lines: number;
 }
 
-const vimMotionRegexp = /(\d*)(j|k)/;
-export function parseVimMotion(s: string): Either<Error, VimMotion> {
-  const match = s.trim().match(vimMotionRegexp);
+export function parseVimMotions(s: string): Either<Error, VimMotion[]> {
+  if (s.length === 0) {
+    return left(new Error("Empty vim motion"));
+  }
+
+  let leftoverInput = s;
+  const motions: VimMotion[] = [];
+
+  while (leftoverInput.length > 0) {
+    const result = parseVimMotion(leftoverInput);
+
+    if (isLeft(result)) {
+      return left(result.left);
+    }
+
+    motions.push(result.right.motion);
+    leftoverInput = leftoverInput.slice(result.right.length);
+  }
+
+  return right(motions);
+}
+
+interface MotionParseResult {
+  motion: VimMotion;
+  length: number;
+}
+
+const vimMotionRegexp = /^(\d*)(j|k)/;
+function parseVimMotion(s: string): Either<Error, MotionParseResult> {
+  const match = s.match(vimMotionRegexp);
   if (match === null) {
     return left(new Error("Could not match a vim motion"));
   }
 
-  const direction = match[match.length - 1] === "j" ? "down" : "up";
+  const direction = match[2] === "j" ? "down" : "up";
 
   let lines = 1;
-  if (match.length === 3) {
+  if (match[1] !== "") {
     // User provided a number
     lines = parseInt(match[1], 10);
 
@@ -25,7 +52,10 @@ export function parseVimMotion(s: string): Either<Error, VimMotion> {
   }
 
   return right({
-    direction,
-    lines,
+    motion: {
+      direction,
+      lines,
+    },
+    length: match[0].length,
   });
 }
