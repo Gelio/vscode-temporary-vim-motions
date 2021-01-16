@@ -1,7 +1,7 @@
 import { Either, isLeft, left, right } from "fp-ts/lib/Either";
 
 export interface VimMotion {
-  direction: "up" | "down";
+  direction: "up" | "down" | "left" | "right";
   lines: number;
 }
 
@@ -32,14 +32,23 @@ interface MotionParseResult {
   length: number;
 }
 
-const vimMotionRegexp = /^(\d*)(j|k)/;
+const letterDirectionMapping = {
+  j: "down",
+  k: "up",
+  h: "left",
+  l: "right",
+} as const;
+
+const vimMotionRegexp = /^(\d*)(j|k|h|l)/;
 function parseVimMotion(s: string): Either<Error, MotionParseResult> {
   const match = s.match(vimMotionRegexp);
   if (match === null) {
     return left(new Error("Could not match a vim motion"));
   }
 
-  const direction = match[2] === "j" ? "down" : "up";
+  const letter = match[2] as keyof typeof letterDirectionMapping;
+
+  const direction = letterDirectionMapping[letter];
 
   let lines = 1;
   if (match[1] !== "") {

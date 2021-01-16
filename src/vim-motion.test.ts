@@ -28,6 +28,22 @@ describe("parseVimMotion", () => {
         },
       },
       {
+        description: "single letter left",
+        input: "h",
+        expectedMotion: {
+          direction: "left",
+          lines: 1,
+        },
+      },
+      {
+        description: "single letter right",
+        input: "l",
+        expectedMotion: {
+          direction: "right",
+          lines: 1,
+        },
+      },
+      {
         description: "single digit lines up",
         input: "7k",
         expectedMotion: {
