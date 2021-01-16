@@ -10,7 +10,14 @@ export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
     "vim-motions.execute",
     async () => {
-      const restoreLineNumber = await enableRelativeLines();
+      const activeTextEditor = vscode.window.activeTextEditor;
+      if (!activeTextEditor) {
+        vscode.window.showErrorMessage(
+          "Please open a file to execute a vim motion",
+        );
+        return;
+      }
+      const restoreLineNumbers = enableRelativeLines(activeTextEditor);
       const result = await vscode.window.showInputBox({
         prompt: "Enter a vim motion",
         placeHolder: "For example: 10j",
@@ -23,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
           ),
       });
 
-      await restoreLineNumber();
+      restoreLineNumbers();
 
       if (!result) {
         return;

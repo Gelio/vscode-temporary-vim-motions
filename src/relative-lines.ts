@@ -1,18 +1,11 @@
-import { window, workspace } from "vscode";
+import { TextEditor, TextEditorLineNumbersStyle } from "vscode";
 
-export const enableRelativeLines = async () => {
-  const config = workspace.getConfiguration(
-    "editor",
-    window.activeTextEditor?.document.uri,
-  );
-  const initialLineNumbersConfiguration = config.inspect("lineNumbers")!;
-  await config.update("lineNumbers", "relative", true);
+export const enableRelativeLines = (editor: TextEditor) => {
+  const initialValue = editor.options.lineNumbers;
+
+  editor.options.lineNumbers = TextEditorLineNumbersStyle.Relative;
 
   return function restore() {
-    return config.update(
-      "lineNumbers",
-      initialLineNumbersConfiguration.globalValue,
-      true,
-    );
+    editor.options.lineNumbers = initialValue;
   };
 };
