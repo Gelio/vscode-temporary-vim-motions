@@ -5,17 +5,17 @@ export interface VimMotion {
   lines: number;
 }
 
-const vimMotionRegexp = /(\d*)(j|k)/;
+const vimMotionRegexp = /^(\d*)(j|k)$/;
 export function parseVimMotion(s: string): Either<Error, VimMotion> {
   const match = s.trim().match(vimMotionRegexp);
   if (match === null) {
     return left(new Error("Could not match a vim motion"));
   }
 
-  const direction = match[match.length - 1] === "j" ? "down" : "up";
+  const direction = match[2] === "j" ? "down" : "up";
 
   let lines = 1;
-  if (match.length === 3) {
+  if (match[1] !== "") {
     // User provided a number
     lines = parseInt(match[1], 10);
 
