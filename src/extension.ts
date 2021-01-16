@@ -1,6 +1,7 @@
 import { getOrElse, isLeft, map } from "fp-ts/lib/Either";
 import { constNull, pipe } from "fp-ts/lib/function";
 import * as vscode from "vscode";
+import { enableRelativeLines } from "./relative-lines";
 import { parseVimMotion } from "./vim-motion";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -9,6 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
     "vim-motions.execute",
     async () => {
+      const restoreLineNumber = await enableRelativeLines();
       const result = await vscode.window.showInputBox({
         prompt: "Enter a vim motion",
         placeHolder: "For example: 10j",
@@ -20,6 +22,8 @@ export function activate(context: vscode.ExtensionContext) {
             getOrElse<Error, string | null>((e) => e.message),
           ),
       });
+
+      await restoreLineNumber();
 
       if (!result) {
         return;
