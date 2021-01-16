@@ -1,6 +1,6 @@
 import { deepStrictEqual, ok } from "assert";
 import { isLeft, right } from "fp-ts/lib/Either";
-import { parseVimMotion, VimMotion } from "./vim-motion";
+import { parseVimMotions, VimMotion } from "./vim-motion";
 
 describe("parseVimMotion", () => {
   describe("single motion", () => {
@@ -43,19 +43,11 @@ describe("parseVimMotion", () => {
           lines: 70,
         },
       },
-      {
-        description: "with trailing whitespace",
-        input: "70k    ",
-        expectedMotion: {
-          direction: "up",
-          lines: 70,
-        },
-      },
     ];
 
-    cases.forEach(({ description, expectedMotion: motion, input }) => {
+    cases.forEach(({ description, expectedMotion, input }) => {
       it(`should parse ${description} (${input})`, () => {
-        deepStrictEqual(parseVimMotion(input), right(motion));
+        deepStrictEqual(parseVimMotions(input), right([expectedMotion]));
       });
     });
   });
@@ -88,6 +80,10 @@ describe("parseVimMotion", () => {
         input: "5.1j",
       },
       {
+        description: "with trailing whitespace",
+        input: "5j     ",
+      },
+      {
         description: "with trailing incorrect characters",
         input: "5j incorrect",
       },
@@ -95,8 +91,79 @@ describe("parseVimMotion", () => {
 
     cases.forEach(({ description, input }) => {
       it(`should reject ${description} (${input})`, () => {
-        const result = parseVimMotion(input);
+        const result = parseVimMotions(input);
         ok(isLeft(result));
+      });
+    });
+  });
+
+  describe("multiple motions", () => {
+    interface TestCase {
+      description: string;
+      input: string;
+      expectedMotions: VimMotion[];
+    }
+
+    const cases: TestCase[] = [
+      {
+        description: "two motions without numbers",
+        input: "jj",
+        expectedMotions: [
+          {
+            direction: "down",
+            lines: 1,
+          },
+          {
+            direction: "down",
+            lines: 1,
+          },
+        ],
+      },
+      {
+        description: "two motions with numbers",
+        input: "2k3j",
+        expectedMotions: [
+          {
+            direction: "up",
+            lines: 2,
+          },
+          {
+            direction: "down",
+            lines: 3,
+          },
+        ],
+      },
+      {
+        description: "five motions",
+        input: "2k3jj10j2k",
+        expectedMotions: [
+          {
+            direction: "up",
+            lines: 2,
+          },
+          {
+            direction: "down",
+            lines: 3,
+          },
+          {
+            direction: "down",
+            lines: 1,
+          },
+          {
+            direction: "down",
+            lines: 10,
+          },
+          {
+            direction: "up",
+            lines: 2,
+          },
+        ],
+      },
+    ];
+
+    cases.forEach(({ description, expectedMotions, input }) => {
+      it(`should parse ${description} (${input})`, () => {
+        deepStrictEqual(parseVimMotions(input), right(expectedMotions));
       });
     });
   });

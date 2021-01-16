@@ -13,7 +13,7 @@ import {
   withChildDisposer,
 } from "./hierarchical-disposer";
 import { Highlighter } from "./highlight";
-import { parseVimMotion } from "./vim-motion";
+import { parseVimMotions } from "./vim-motion";
 
 export async function processVimMotionInput({
   disposer: parentDisposer,
@@ -97,19 +97,29 @@ class VimMotionInput implements Disposable {
   }
 
   private onInputValueChange = async (s: string) => {
-    const result = parseVimMotion(s);
-    this.restoreSelection();
+    await this.parseAndExecuteMotions(s.trim());
+    this.highlighter.highlight();
+  };
+
+  private parseAndExecuteMotions = async (input: string) => {
+    const result = parseVimMotions(input);
 
     if (isLeft(result)) {
       this.inputBox.validationMessage = result.left.message;
       return;
     }
 
+    this.restoreSelection();
     this.inputBox.validationMessage = undefined;
-    await commands.executeCommand("cursorMove", {
-      to: result.right.direction,
-      value: result.right.lines,
-    });
-    this.highlighter.highlight();
+    let lastCommand: Thenable<unknown> = Promise.resolve();
+
+    for (const motion of result.right) {
+      lastCommand = commands.executeCommand("cursorMove", {
+        to: motion.direction,
+        value: motion.lines,
+      });
+    }
+
+    await lastCommand;
   };
 }
