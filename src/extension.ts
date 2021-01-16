@@ -1,48 +1,61 @@
-import { getOrElse, isLeft, map } from "fp-ts/lib/Either";
-import { constNull, pipe } from "fp-ts/lib/function";
+import { some } from "fp-ts/lib/Option";
 import * as vscode from "vscode";
+import {
+  createRootDisposer,
+  HierarchicalDisposer,
+  withExistingDisposer,
+} from "./hierarchical-disposer";
+import { Highlighter } from "./highlight";
+import { processVimMotionInput } from "./input";
 import { enableRelativeLines } from "./relative-lines";
-import { parseVimMotion } from "./vim-motion";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("vim-motions extension is now active");
-
-  const disposable = vscode.commands.registerCommand(
-    "vim-motions.execute",
-    async () => {
-      const restoreLineNumber = await enableRelativeLines();
-      const result = await vscode.window.showInputBox({
-        prompt: "Enter a vim motion",
-        placeHolder: "For example: 10j",
-        validateInput: (s) =>
-          pipe(
-            s,
-            parseVimMotion,
-            map(constNull),
-            getOrElse<Error, string | null>((e) => e.message),
-          ),
-      });
-
-      await restoreLineNumber();
-
-      if (!result) {
-        return;
-      }
-
-      const vimMotion = parseVimMotion(result);
-      if (isLeft(vimMotion)) {
-        throw new Error(
-          `Internal error, input validation is not working properly: ${vimMotion.left}`,
-        );
-      }
-
-      console.log("Moving", vimMotion.right);
-      vscode.commands.executeCommand("cursorMove", {
-        to: vimMotion.right.direction,
-        value: vimMotion.right.lines,
-      });
+  const destinationCursorDecoration = vscode.window.createTextEditorDecorationType(
+    {
+      backgroundColor: new vscode.ThemeColor("editor.selectionBackground"),
     },
   );
 
-  context.subscriptions.push(disposable);
+  const disposable = vscode.commands.registerCommand(
+    "vim-motions.execute",
+    () =>
+      withExistingDisposer(
+        createRootDisposer(context.subscriptions),
+        async (disposer) => {
+          const activeTextEditor = vscode.window.activeTextEditor;
+          if (!activeTextEditor) {
+            vscode.window.showErrorMessage(
+              "Please open a file to execute a vim motion",
+            );
+            return;
+          }
+
+          const initialSelection = activeTextEditor.selection;
+
+          if (!initialSelection.isEmpty) {
+            vscode.window.showErrorMessage(
+              "Executing vim motions with an active selection",
+            );
+            return;
+          }
+
+          const highlighter = new Highlighter(
+            destinationCursorDecoration,
+            activeTextEditor,
+          );
+          disposer.add(highlighter);
+          disposer.add(enableRelativeLines(activeTextEditor));
+
+          await processVimMotionInput({
+            disposer: new HierarchicalDisposer(some(disposer)),
+            editor: activeTextEditor,
+            highlighter,
+            initialSelection,
+          });
+        },
+      ),
+  );
+
+  context.subscriptions.push(disposable, destinationCursorDecoration);
 }
