@@ -20,7 +20,26 @@
         "title": "Execute vim motions",
         "enablement": "editorIsOpen"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Temporary vim motions",
+      "properties": {
+        "temporary-vim-motions.toggleRelativeLineNumbers": {
+          "type": "boolean",
+          "default": true,
+          "description": "When enabled, enables relative line numbers when executing temporary vim motions. Reverts back to the default after exiting."
+        },
+        "temporary-vim-motions.surroundingLines": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": 5,
+          "description": "If set, when entering temporary vim motions, shows surrounding lines when scrolling close to editor top/bottom.",
+          "minimum": 0
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
