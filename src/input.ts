@@ -1,6 +1,6 @@
 import { isLeft } from "fp-ts/lib/Either";
 import { isSome, none } from "fp-ts/lib/Option";
-import { commands, Disposable, Selection, TextEditor, window } from "vscode";
+import { Disposable, TextEditor, window } from "vscode";
 import {
   HierarchicalDisposer,
   withChildDisposer,
@@ -8,23 +8,21 @@ import {
 import { Highlighter } from "./highlight";
 import { parseVimMotions } from "./motions";
 import { executeMotions } from "./motions/execute";
+import { VimMotion } from "./motions/parsers";
 
 export async function processVimMotionInput({
   disposer: parentDisposer,
   editor,
   highlighter,
-  initialSelection,
 }: {
   disposer: HierarchicalDisposer;
   editor: TextEditor;
-  initialSelection: Selection;
   highlighter: Highlighter;
 }) {
   return withChildDisposer(parentDisposer, (disposer) => {
     const input = new VimMotionInput({
-      editor,
+      executeMotions: executeMotions(editor),
       highlighter,
-      initialSelection,
     });
     disposer.add(input);
 
@@ -36,16 +34,15 @@ class VimMotionInput implements Disposable {
   private readonly inputBox = window.createInputBox();
   private readonly highlighter: Highlighter;
   private readonly donePromise: Promise<boolean>;
+  private readonly executeMotions: (motions: VimMotion[]) => Promise<void>;
 
   public dispose: Disposable["dispose"];
 
   constructor({
-    editor,
+    executeMotions,
     highlighter,
-    initialSelection,
   }: {
-    editor: TextEditor;
-    initialSelection: Selection;
+    executeMotions: (motions: VimMotion[]) => Promise<void>;
     highlighter: Highlighter;
   }) {
     const disposer = new HierarchicalDisposer(none);
@@ -57,6 +54,7 @@ class VimMotionInput implements Disposable {
     disposer.add(this.inputBox.onDidChangeValue(this.onInputValueChange));
 
     this.highlighter = highlighter;
+    this.executeMotions = executeMotions;
 
     this.donePromise = new Promise<boolean>((resolve) => {
       let accepted = false;
@@ -99,7 +97,7 @@ class VimMotionInput implements Disposable {
       return;
     }
 
-    await executeMotions(result.right.motion);
+    await this.executeMotions(result.right.motion);
     this.inputBox.value = result.right.unmatchedInput;
   };
 }

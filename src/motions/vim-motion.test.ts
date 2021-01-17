@@ -1,6 +1,7 @@
 import { deepStrictEqual, ok } from "assert";
 import { isLeft, isRight } from "fp-ts/lib/Either";
-import { parseVimMotions, VimMotion } from "./vim-motion";
+import { VimMotion } from "./parsers";
+import { parseVimMotions } from "./vim-motion";
 
 describe("parseVimMotions", () => {
   describe("valid motions", () => {
