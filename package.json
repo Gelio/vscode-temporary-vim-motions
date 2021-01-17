@@ -3,6 +3,7 @@
   "displayName": "temporary-vim-motions",
   "description": "A VSCode popup for vim motions",
   "version": "0.0.1",
+  "publisher": "gelio",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -13,6 +14,10 @@
     "onCommand:temporary-vim-motions.execute"
   ],
   "main": "./dist/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gelio/vscode-temporary-vim-motions"
+  },
   "contributes": {
     "commands": [
       {
