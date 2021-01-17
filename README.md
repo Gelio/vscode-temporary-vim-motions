@@ -1,16 +1,29 @@
-# vim-motions README
+# Temporary vim motions
 
-This is the README for your extension "vim-motions". After writing up a brief description, we recommend including the following sections.
+![Temporary vim motions showcase](./assets/showcase.gif)
+
+A VSCode extension that allows entering a temporary mode for moving around the code using supported
+[vim motions](https://www.cs.auckland.ac.nz/references/gnu/vim/motion.html).
+
+This makes it easier to intertwine regular VSCode nagivation with using vim's motions.
+
+## Supported vim motions
+
+- basic move up/down/right/left (`j`, `k`, `h`, `l`)
+- next/previous character in line (`f`, `F`)
+- start/end of the line (`$`, `^`)
+- basic word motions (`w`, `e`, `b`)
+
+When it makes sense, a number prefix (e.g. `2f{`) executes a motion given number of times.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- highlights the current position in the code
+- temporarily enables relative line numbers to make navigation easier
+- supports executing a motion multiple times (e.g. `15l`)
+- when moving close to the top/bottom of the editor, shows surrounding lines
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+  ![Surrounding lines showcase](./assets/surrounding-lines.gif)
 
 ## Requirements
 
@@ -18,48 +31,31 @@ None
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-- `myExtension.enable`: enable/disable this extension
-- `myExtension.thing`: set to `blah` to do something
+- `temporary-vim-motions.toggleRelativeLineNumbers`: enable/disable turning on relative line numbers
+  when executing motions
+- `temporary-vim-motions.surroundingLines`: number of surrounding lines to show when scrolling. If
+  empty - the surrounding lines feature is disabled.
+
+By default, there are no keyboard shortcuts for this command, so if you'd like, set a keybinding for
+the `temporary-vim-motions.execute` command.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Keep in mind that this extension does not offer full vim support. For that, you probably want to use
+[vim](https://marketplace.visualstudio.com/items?itemName=vscodevim.vim) or
+[Neo Vim](https://marketplace.visualstudio.com/items?itemName=asvetliakov.vscode-neovim) extensions
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+See [the CHANGELOG](./CHANGELOG.md).
 
-### 1.0.0
+## Contributing
 
-Initial release of ...
+Found a bug? Want a new feature/motion? Feel free to do any of the following:
 
-### 1.0.1
+1. Create an issue
+2. Open a PR with a bugfix/feature
 
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-- Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-- Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Contributions are greatly appreciated!
