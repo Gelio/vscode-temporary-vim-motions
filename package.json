@@ -57,7 +57,9 @@
     "pretest:unit": "npm run compile",
     "test:unit": "mocha './out/**/*.test.js' --ignore './out/test/**'",
     "webpack": "webpack --mode development",
-    "webpack:watch": "webpack --mode development --watch"
+    "webpack:watch": "webpack --mode development --watch",
+    "vscode:package": "vsce package --githubBranch main",
+    "vscode:publish": "vsce publish --githubBranch main"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
