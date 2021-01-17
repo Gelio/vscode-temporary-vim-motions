@@ -11,7 +11,7 @@ import { enableRelativeLines } from "./relative-lines";
 import { enableScrollPadding } from "./scroll-padding";
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log("vim-motions extension is now active");
+  console.log("temporary-vim-motions extension is now active");
   const destinationCursorDecoration = vscode.window.createTextEditorDecorationType(
     {
       backgroundColor: new vscode.ThemeColor("editor.selectionBackground"),
@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   const disposable = vscode.commands.registerCommand(
-    "vim-motions.execute",
+    "temporary-vim-motions.execute",
     () =>
       withExistingDisposer(
         createRootDisposer(context.subscriptions),
@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 
           if (!initialSelection.isEmpty) {
             vscode.window.showErrorMessage(
-              "Executing vim motions with an active selection",
+              "Executing vim motions with an active selection is not supported. Please deselect the text first",
             );
             return;
           }

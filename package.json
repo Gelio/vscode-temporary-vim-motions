@@ -1,7 +1,7 @@
 {
-  "name": "vim-motions",
-  "displayName": "vim-motions",
-  "description": "A popup for vim motions",
+  "name": "temporary-vim-motions",
+  "displayName": "temporary-vim-motions",
+  "description": "A VSCode popup for vim motions",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.52.0"
@@ -10,14 +10,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vim-motions.execute"
+    "onCommand:temporary-vim-motions.execute"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "vim-motions.execute",
-        "title": "Execute vim motion",
+        "command": "temporary-vim-motions.execute",
+        "title": "Execute vim motions",
         "enablement": "editorIsOpen"
       }
     ]
