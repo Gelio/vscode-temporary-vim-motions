@@ -2,11 +2,18 @@ import { isLeft, left, right } from "fp-ts/lib/Either";
 import { isSome, none } from "fp-ts/lib/Option";
 import { BasicMotion, parseBasicMotion } from "./basic";
 import { MotionParser } from "./shared";
+import {
+  parseStartEndOfLineMotion,
+  StartEndOfLineMotion,
+} from "./start-end-of-line";
 
 // TODO: add other motion types and parses
-export type VimMotion = BasicMotion;
+export type VimMotion = BasicMotion | StartEndOfLineMotion;
 
-const parsers: MotionParser<VimMotion>[] = [parseBasicMotion];
+const parsers: MotionParser<VimMotion>[] = [
+  parseBasicMotion,
+  parseStartEndOfLineMotion,
+];
 
 export const parseVimMotions: MotionParser<VimMotion[]> = (s: string) => {
   let leftoverInput = s;

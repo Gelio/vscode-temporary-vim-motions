@@ -5,10 +5,19 @@ export const executeMotions = async (motions: VimMotion[]): Promise<void> => {
   let lastCommand: Thenable<unknown> = Promise.resolve();
 
   for (const motion of motions) {
-    lastCommand = commands.executeCommand("cursorMove", {
-      to: motion.direction,
-      value: motion.lines,
-    });
+    lastCommand = (() => {
+      switch (motion.type) {
+        case "basic":
+          return commands.executeCommand("cursorMove", {
+            to: motion.direction,
+            value: motion.lines,
+          });
+        case "start-end-line":
+          return commands.executeCommand(
+            "cursor" + (motion.variant === "end" ? "End" : "Home"),
+          );
+      }
+    })();
   }
 
   await lastCommand;
