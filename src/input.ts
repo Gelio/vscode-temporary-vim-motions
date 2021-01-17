@@ -1,19 +1,13 @@
 import { isLeft } from "fp-ts/lib/Either";
-import { none, some } from "fp-ts/lib/Option";
-import {
-  commands,
-  Disposable,
-  InputBox,
-  Selection,
-  TextEditor,
-  window,
-} from "vscode";
+import { isSome, none } from "fp-ts/lib/Option";
+import { commands, Disposable, Selection, TextEditor, window } from "vscode";
 import {
   HierarchicalDisposer,
   withChildDisposer,
 } from "./hierarchical-disposer";
 import { Highlighter } from "./highlight";
-import { parseVimMotions } from "./vim-motion";
+import { parseVimMotions } from "./motions";
+import { executeMotions } from "./motions/execute";
 
 export async function processVimMotionInput({
   disposer: parentDisposer,
@@ -41,7 +35,6 @@ export async function processVimMotionInput({
 class VimMotionInput implements Disposable {
   private readonly inputBox = window.createInputBox();
   private readonly highlighter: Highlighter;
-  private readonly restoreSelection: () => void;
   private readonly donePromise: Promise<boolean>;
 
   public dispose: Disposable["dispose"];
@@ -65,19 +58,11 @@ class VimMotionInput implements Disposable {
 
     this.highlighter = highlighter;
 
-    this.restoreSelection = () => {
-      editor.selection = initialSelection;
-      this.highlighter.highlight();
-    };
-
     this.donePromise = new Promise<boolean>((resolve) => {
       let accepted = false;
 
       disposer.add(
         this.inputBox.onDidHide(() => {
-          if (!accepted) {
-            this.restoreSelection();
-          }
           resolve(accepted);
         }),
       );
@@ -103,23 +88,18 @@ class VimMotionInput implements Disposable {
 
   private parseAndExecuteMotions = async (input: string) => {
     const result = parseVimMotions(input);
+    this.inputBox.validationMessage = undefined;
+    this.highlighter.highlight();
 
     if (isLeft(result)) {
-      this.inputBox.validationMessage = result.left.message;
+      if (isSome(result.left)) {
+        this.inputBox.validationMessage = result.left.value.message;
+      }
+
       return;
     }
 
-    this.restoreSelection();
-    this.inputBox.validationMessage = undefined;
-    let lastCommand: Thenable<unknown> = Promise.resolve();
-
-    for (const motion of result.right) {
-      lastCommand = commands.executeCommand("cursorMove", {
-        to: motion.direction,
-        value: motion.lines,
-      });
-    }
-
-    await lastCommand;
+    await executeMotions(result.right.motion);
+    this.inputBox.value = result.right.unmatchedInput;
   };
 }
