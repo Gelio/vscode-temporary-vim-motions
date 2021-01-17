@@ -41,10 +41,16 @@ export const executeMotions = (editor: TextEditor) => async (
           let destinationCharacterIndex = initialCharacterIndex;
 
           for (let i = 0; i < motion.times; i++) {
-            const nextIndex = lineText.indexOf(
-              motion.character,
-              destinationCharacterIndex + 1,
-            );
+            const nextIndex =
+              motion.direction === "forward"
+                ? lineText.indexOf(
+                    motion.character,
+                    destinationCharacterIndex + 1,
+                  )
+                : lineText.lastIndexOf(
+                    motion.character,
+                    destinationCharacterIndex - 1,
+                  );
 
             if (nextIndex === -1) {
               console.log(
