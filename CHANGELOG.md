@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.0.3 (2020-01-17)
+
+- Internal changes related to extension publishing
+
 ## v0.0.2 (2021-01-17)
 
 - Add extension icon
