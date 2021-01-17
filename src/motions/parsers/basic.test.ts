@@ -2,7 +2,7 @@ import { deepStrictEqual, ok } from "assert";
 import { isLeft, right } from "fp-ts/lib/Either";
 import { isNone } from "fp-ts/lib/Option";
 import { BasicMotion, parseBasicMotion } from "./basic";
-import { MotionParseResult } from "./shared";
+import { MotionParseResult } from "../shared";
 
 describe("parseBasicMotion", () => {
   describe("valid cases", () => {

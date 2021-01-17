@@ -1,6 +1,7 @@
-import { left, right } from "fp-ts/lib/Either";
-import { none, some } from "fp-ts/lib/Option";
-import { MotionParser } from "../shared";
+import { left, orElse, right } from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/function";
+import { isNone, none, some } from "fp-ts/lib/Option";
+import { MotionParser } from "../../shared";
 
 const numberRegexp = /^\d+/;
 export const parseNumber: MotionParser<number> = (input) => {
@@ -20,3 +21,13 @@ export const parseNumber: MotionParser<number> = (input) => {
     unmatchedInput: input.slice(rawNumber.length),
   });
 };
+
+export const parseOptionalNumber: MotionParser<number> = (input) =>
+  pipe(
+    parseNumber(input),
+    orElse((e) =>
+      isNone(e)
+        ? right({ motion: 1, unmatchedInput: input })
+        : left(some(e.value)),
+    ),
+  );

@@ -1,8 +1,8 @@
-import { chain, left, orElse, right } from "fp-ts/lib/Either";
+import { chain, left, right } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
-import { isNone, none, Option, some } from "fp-ts/lib/Option";
-import { parseNumber } from "./internal";
-import { MotionParser } from "./shared";
+import { none } from "fp-ts/lib/Option";
+import { parseOptionalNumber } from "./internal";
+import { MotionParser } from "../shared";
 
 export interface BasicMotion {
   type: "basic";
@@ -19,10 +19,7 @@ const letterDirectionMapping = {
 
 export const parseBasicMotion: MotionParser<BasicMotion> = (s) =>
   pipe(
-    parseNumber(s),
-    orElse((e) =>
-      isNone(e) ? right({ motion: 1, unmatchedInput: s }) : left(some(e.value)),
-    ),
+    parseOptionalNumber(s),
     chain(({ unmatchedInput, motion: lines }) => {
       const letter = unmatchedInput[0];
       if (!letterDirectionMapping.hasOwnProperty(letter)) {

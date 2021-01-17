@@ -1,6 +1,6 @@
 import { left, right } from "fp-ts/lib/Either";
 import { none } from "fp-ts/lib/Option";
-import { MotionParser } from "./shared";
+import { MotionParser } from "../shared";
 
 export interface StartEndOfLineMotion {
   type: "start-end-line";

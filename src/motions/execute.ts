@@ -1,4 +1,5 @@
 import { commands } from "vscode";
+import { WordBoundaryVariant } from "./parsers";
 import { VimMotion } from "./vim-motion";
 
 export const executeMotions = async (motions: VimMotion[]): Promise<void> => {
@@ -15,6 +16,18 @@ export const executeMotions = async (motions: VimMotion[]): Promise<void> => {
         case "start-end-line":
           return commands.executeCommand(
             "cursor" + (motion.variant === "end" ? "End" : "Home"),
+          );
+        case "word-boundary":
+          const commandsForVariants: Record<WordBoundaryVariant, string> = {
+            [WordBoundaryVariant.back]: "cursorWordLeft",
+            [WordBoundaryVariant.end]: "cursorWordEndRight",
+            [WordBoundaryVariant.word]: "cursorWordRight",
+          };
+          const command = commandsForVariants[motion.variant];
+
+          return Array.from({ length: motion.times }).reduce<Thenable<unknown>>(
+            () => commands.executeCommand(command),
+            Promise.resolve(),
           );
       }
     })();
