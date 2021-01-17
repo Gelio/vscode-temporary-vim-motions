@@ -12,7 +12,7 @@
   "activationEvents": [
     "onCommand:temporary-vim-motions.execute"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -42,26 +42,32 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "webpack --mode production",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "test:unit": "mocha './out/**/*.test.js' --ignore './out/test/**'"
+    "pretest:unit": "npm run compile",
+    "test:unit": "mocha './out/**/*.test.js' --ignore './out/test/**'",
+    "webpack": "webpack --mode development",
+    "webpack:watch": "webpack --mode development --watch"
   },
   "devDependencies": {
-    "@types/vscode": "^1.52.0",
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.0.4",
     "@types/node": "^12.11.7",
-    "eslint": "^7.15.0",
+    "@types/vscode": "^1.52.0",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.15.0",
     "glob": "^7.1.6",
     "mocha": "^8.1.3",
+    "ts-loader": "^8.0.14",
     "typescript": "^4.1.2",
-    "vscode-test": "^1.4.1"
+    "vscode-test": "^1.4.1",
+    "webpack": "^5.15.0",
+    "webpack-cli": "^4.3.1"
   },
   "dependencies": {
     "fp-ts": "^2.9.3"
