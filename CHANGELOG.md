@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.0.2 (2021-01-17)
+
+- Add extension icon
+
 ## v0.0.1 (2021-01-17)
 
 - Initial release

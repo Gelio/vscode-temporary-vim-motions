@@ -2,8 +2,9 @@
   "name": "temporary-vim-motions",
   "displayName": "Temporary vim motions",
   "description": "A VSCode popup for vim motions",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "gelio",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.52.0"
   },
