@@ -51,7 +51,6 @@ export function activate(context: vscode.ExtensionContext) {
             disposer: new HierarchicalDisposer(some(disposer)),
             editor: activeTextEditor,
             highlighter,
-            initialSelection,
           });
         },
       ),
