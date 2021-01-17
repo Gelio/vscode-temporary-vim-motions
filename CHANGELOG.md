@@ -1,9 +1,17 @@
 # Change Log
 
-## [Unreleased]
+## v0.0.3 (2020-01-17)
+
+- Internal changes related to extension publishing
+
+## v0.0.2 (2021-01-17)
+
+- Add extension icon
+
+## v0.0.1 (2021-01-17)
 
 - Initial release
-- Add an _Execute vim motion_ command that allows to jump to a nearby relative line
+- Add an _Execute vim motions_ command that allows to jump to a nearby relative line
 - Switches to relative lines when invoking the command (configurable in the settings)
 - Highlights the cursor destination
 - Handle multiple motions in a single execution (e.g. `10j2k`)

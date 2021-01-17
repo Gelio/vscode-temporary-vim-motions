@@ -1,6 +1,6 @@
 # Temporary vim motions
 
-![Temporary vim motions showcase](./assets/showcase.gif)
+![Temporary vim motions showcase](assets/showcase.gif)
 
 A VSCode extension that allows entering a temporary mode for moving around the code using supported
 [vim motions](https://www.cs.auckland.ac.nz/references/gnu/vim/motion.html).
@@ -23,7 +23,7 @@ When it makes sense, a number prefix (e.g. `2f{`) executes a motion given number
 - supports executing a motion multiple times (e.g. `15l`)
 - when moving close to the top/bottom of the editor, shows surrounding lines
 
-  ![Surrounding lines showcase](./assets/surrounding-lines.gif)
+  ![Surrounding lines showcase](assets/surrounding-lines.gif)
 
 ## Requirements
 
@@ -49,7 +49,7 @@ Keep in mind that this extension does not offer full vim support. For that, you 
 
 ## Release Notes
 
-See [the CHANGELOG](./CHANGELOG.md).
+See [the CHANGELOG](CHANGELOG.md).
 
 ## Contributing
 
