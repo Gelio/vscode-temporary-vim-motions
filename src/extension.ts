@@ -46,8 +46,21 @@ export function activate(context: vscode.ExtensionContext) {
             activeTextEditor,
           );
           disposer.add(highlighter);
-          disposer.add(enableRelativeLines(activeTextEditor));
-          disposer.add(await enableScrollPadding(5));
+
+          const extensionSettings = vscode.workspace.getConfiguration(
+            "temporary-vim-motions",
+          );
+
+          if (extensionSettings.get("toggleRelativeLineNumbers")) {
+            disposer.add(enableRelativeLines(activeTextEditor));
+          }
+
+          const surroundingLinesSetting = extensionSettings.get(
+            "surroundingLines",
+          );
+          if (typeof surroundingLinesSetting === "number") {
+            disposer.add(await enableScrollPadding(surroundingLinesSetting));
+          }
 
           await processVimMotionInput({
             disposer: new HierarchicalDisposer(some(disposer)),
