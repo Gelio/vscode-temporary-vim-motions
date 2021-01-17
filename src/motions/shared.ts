@@ -3,7 +3,7 @@ import { Option } from "fp-ts/lib/Option";
 
 export interface MotionParseResult<M> {
   motion: M;
-  length: number;
+  unmatchedInput: string;
 }
 
 /**

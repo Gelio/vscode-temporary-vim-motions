@@ -10,7 +10,6 @@ const parsers: MotionParser<VimMotion>[] = [parseBasicMotion];
 
 export const parseVimMotions: MotionParser<VimMotion[]> = (s: string) => {
   let leftoverInput = s;
-  let parsedLength = 0;
   const motions: VimMotion[] = [];
 
   while (leftoverInput.length > 0) {
@@ -26,8 +25,7 @@ export const parseVimMotions: MotionParser<VimMotion[]> = (s: string) => {
       } else {
         noMatches = false;
         motions.push(result.right.motion);
-        leftoverInput = leftoverInput.slice(result.right.length);
-        parsedLength += result.right.length;
+        leftoverInput = result.right.unmatchedInput;
         break;
       }
     }
@@ -43,6 +41,6 @@ export const parseVimMotions: MotionParser<VimMotion[]> = (s: string) => {
 
   return right({
     motion: motions,
-    length: parsedLength,
+    unmatchedInput: leftoverInput,
   });
 };

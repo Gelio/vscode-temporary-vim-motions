@@ -1,5 +1,5 @@
 import { deepStrictEqual, ok } from "assert";
-import { isLeft, isRight, right } from "fp-ts/lib/Either";
+import { isLeft, isRight } from "fp-ts/lib/Either";
 import { parseVimMotions, VimMotion } from "./vim-motion";
 
 describe("parseVimMotions", () => {
@@ -8,10 +8,7 @@ describe("parseVimMotions", () => {
       description: string;
       input: string;
       expectedMotions: VimMotion[];
-      /**
-       * If undefined, then whole input should be parsed
-       */
-      parsedLength?: number;
+      unmatchedInput?: string;
     }
 
     const cases: TestCase[] = [
@@ -81,17 +78,12 @@ describe("parseVimMotions", () => {
     ];
 
     cases.forEach(
-      ({
-        description,
-        expectedMotions,
-        input,
-        parsedLength = input.length,
-      }) => {
+      ({ description, expectedMotions, input, unmatchedInput = "" }) => {
         it(`should parse ${description} (${input})`, () => {
           const result = parseVimMotions(input);
           ok(isRight(result));
 
-          deepStrictEqual(result.right.length, parsedLength);
+          deepStrictEqual(result.right.unmatchedInput, unmatchedInput);
           deepStrictEqual(result.right.motion, expectedMotions);
         });
       },

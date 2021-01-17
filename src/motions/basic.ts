@@ -47,6 +47,6 @@ export const parseBasicMotion: MotionParser<BasicMotion> = (s) => {
 
   return right({
     motion,
-    length: match[0].length,
+    unmatchedInput: s.slice(match[0].length),
   });
 };
