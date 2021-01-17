@@ -8,6 +8,7 @@ import {
 import { Highlighter } from "./highlight";
 import { processVimMotionInput } from "./input";
 import { enableRelativeLines } from "./relative-lines";
+import { enableScrollPadding } from "./scroll-padding";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("vim-motions extension is now active");
@@ -46,6 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
           );
           disposer.add(highlighter);
           disposer.add(enableRelativeLines(activeTextEditor));
+          disposer.add(await enableScrollPadding(5));
 
           await processVimMotionInput({
             disposer: new HierarchicalDisposer(some(disposer)),

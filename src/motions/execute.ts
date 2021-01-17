@@ -64,6 +64,7 @@ export const executeMotions = (editor: TextEditor) => async (
 
           return commands.executeCommand("cursorMove", {
             to: "right",
+            // NOTE: VSCode understands that move right -5 == move left 5
             value: destinationCharacterIndex - initialCharacterIndex,
           });
       }
