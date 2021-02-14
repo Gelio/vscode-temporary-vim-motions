@@ -13,6 +13,7 @@ This makes it easier to intertwine regular VSCode nagivation with using vim's mo
 - next/previous character in line (`f`, `F`)
 - start/end of the line (`$`, `^`)
 - basic word motions (`w`, `e`, `b`)
+- start/end of the file (`gg`, `G`)
 
 When it makes sense, a number prefix (e.g. `2f{`) executes a motion given number of times.
 

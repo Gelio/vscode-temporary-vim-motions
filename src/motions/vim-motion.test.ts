@@ -76,6 +76,15 @@ describe("parseVimMotions", () => {
           },
         ],
       },
+      {
+        description: "start and end of file",
+        input: "ggG",
+        expectedMotions: [
+          { type: "start-end-file", variant: "start" },
+
+          { type: "start-end-file", variant: "end" },
+        ],
+      },
     ];
 
     cases.forEach(
@@ -104,7 +113,7 @@ describe("parseVimMotions", () => {
       },
       {
         description: "unsupported motion",
-        input: "gg",
+        input: "201gg",
       },
     ];
 

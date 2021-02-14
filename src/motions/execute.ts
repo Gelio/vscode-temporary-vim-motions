@@ -21,7 +21,7 @@ export const executeMotions = (editor: TextEditor) => async (
             "cursor" + (motion.variant === "end" ? "End" : "Home"),
           );
 
-        case "word-boundary":
+        case "word-boundary": {
           const commandsForVariants: Record<WordBoundaryVariant, string> = {
             [WordBoundaryVariant.back]: "cursorWordLeft",
             [WordBoundaryVariant.end]: "cursorWordEndRight",
@@ -33,8 +33,9 @@ export const executeMotions = (editor: TextEditor) => async (
             () => commands.executeCommand(command),
             Promise.resolve(),
           );
+        }
 
-        case "find-character":
+        case "find-character": {
           const currentLine = editor.selection.active;
           const lineText = editor.document.lineAt(currentLine.line).text;
           const initialCharacterIndex = currentLine.character;
@@ -67,6 +68,13 @@ export const executeMotions = (editor: TextEditor) => async (
             // NOTE: VSCode understands that move right -5 == move left 5
             value: destinationCharacterIndex - initialCharacterIndex,
           });
+        }
+
+        case "start-end-file": {
+          return commands.executeCommand(
+            motion.variant === "start" ? "cursorTop" : "cursorBottom",
+          );
+        }
       }
     })();
   }

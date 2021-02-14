@@ -1,5 +1,11 @@
 # Change Log
 
+## Unreleased
+
+### Added
+
+- Support jumping to the beginning or end of the file (`gg` and `G`)
+
 ## v0.0.3 (2020-01-17)
 
 - Internal changes related to extension publishing
